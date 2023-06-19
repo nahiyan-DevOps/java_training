@@ -1,84 +1,103 @@
-// Target interface
-interface Commando {
-    void executeCommand();
-}
-
-// Green Beret class (Adaptee)
-class GreenBeret {
-    public void performAttack() {
-        System.out.println("Green Beret: Performing close-quarters attack");
-    }
-}
-
-// Adapter for Green Beret
-class GreenBeretAdapter implements Commando {
-    private GreenBeret greenBeret;
-
-    public GreenBeretAdapter(GreenBeret greenBeret) {
-        this.greenBeret = greenBeret;
-    }
-
-    @Override
-    public void executeCommand() {
-        greenBeret.performAttack();
-    }
-}
-
-// Sniper class (Adaptee)
-class Sniper {
-    public void performSnipe() {
-        System.out.println("Sniper: Performing sniper shot");
-    }
-}
-
-// Adapter for Sniper
-class SniperAdapter implements Commando {
-    private Sniper sniper;
-
-    public SniperAdapter(Sniper sniper) {
-        this.sniper = sniper;
-    }
-
-    @Override
-    public void executeCommand() {
-        sniper.performSnipe();
-    }
-}
-
-// Spy class (Adaptee)
-class Spy {
-    public void performInfiltration() {
-        System.out.println("Spy: Infiltrating enemy territory");
-    }
-}
-
-// Adapter for Spy
-class SpyAdapter implements Commando {
-    private Spy spy;
-
-    public SpyAdapter(Spy spy) {
-        this.spy = spy;
-    }
-
-    @Override
-    public void executeCommand() {
-        spy.performInfiltration();
-    }
-}
-
-// Client code
 public class Main {
+    // Adaptee: CommandoAbilities
+    interface CommandoAbilities {
+        void performPrimaryAction();
+        void performSecondaryAction();
+    }
+
+    // Concrete Adaptees: GreenBeretAbilities, SniperAbilities, SpyAbilities
+    static class GreenBeretAbilities implements CommandoAbilities {
+        @Override
+        public void performPrimaryAction() {
+            System.out.println("Green Beret performs close-quarters combat.");
+        }
+
+        @Override
+        public void performSecondaryAction() {
+            System.out.println("Green Beret can pick up enemy uniforms for disguise.");
+        }
+    }
+
+    static class SniperAbilities implements CommandoAbilities {
+        @Override
+        public void performPrimaryAction() {
+            System.out.println("Sniper performs long-range sniping.");
+        }
+
+        @Override
+        public void performSecondaryAction() {
+            System.out.println("Sniper can disguise as a civilian or enemy officer.");
+        }
+    }
+
+    static class SpyAbilities implements CommandoAbilities {
+        @Override
+        public void performPrimaryAction() {
+            System.out.println("Spy excels in infiltration and sabotage.");
+        }
+
+        @Override
+        public void performSecondaryAction() {
+            System.out.println("Spy can silently eliminate enemies with a silenced pistol or throwing knife.");
+        }
+    }
+
+    // Adapter: CommandoCharacterAdapter
+    static class CommandoCharacterAdapter implements CommandoAbilities {
+        private final CommandoCharacter character;
+
+        public CommandoCharacterAdapter(CommandoCharacter character) {
+            this.character = character;
+        }
+
+        @Override
+        public void performPrimaryAction() {
+            character.performPrimaryAction();
+        }
+
+        @Override
+        public void performSecondaryAction() {
+            character.performSecondaryAction();
+        }
+    }
+
+    // CommandoCharacter class
+    static class CommandoCharacter {
+        private final String name;
+        private final String weapon;
+        private final String ability;
+
+        public CommandoCharacter(String name, String weapon, String ability) {
+            this.name = name;
+            this.weapon = weapon;
+            this.ability = ability;
+        }
+
+        public void performPrimaryAction() {
+            System.out.println(name + " performs the primary action: " + weapon + " attack.");
+        }
+
+        public void performSecondaryAction() {
+            System.out.println(name + " performs the secondary action: " + ability + ".");
+        }
+    }
+
     public static void main(String[] args) {
-        GreenBeret greenBeret = new GreenBeret();
-        Commando greenBeretAdapter = new GreenBeretAdapter(greenBeret);
-        greenBeretAdapter.executeCommand();
+        CommandoCharacter greenBeret = new CommandoCharacter("Green Beret", "Knife", "Silent takedowns");
+        CommandoCharacter sniper = new CommandoCharacter("Sniper", "Sniper Rifle", "Long-range precision shots");
+        CommandoCharacter spy = new CommandoCharacter("Spy", "Silenced Pistol", "Disguise and stealth");
 
-        Sniper sniper = new Sniper();
-        Commando sniperAdapter = new SniperAdapter(sniper);
-        sniperAdapter.executeCommand();
+        CommandoAbilities greenBeretAbilities = new CommandoCharacterAdapter(greenBeret);
+        CommandoAbilities sniperAbilities = new CommandoCharacterAdapter(sniper);
+        CommandoAbilities spyAbilities = new CommandoCharacterAdapter(spy);
 
-        Spy spy = new Spy();
-        Commando spyAdapter = new SpyAdapter(spy);
-        spyAdapter.executeCommand();
+        greenBeretAbilities.performPrimaryAction();
+        greenBeretAbilities.performSecondaryAction();
+
+        sniperAbilities.performPrimaryAction();
+        sniperAbilities.performSecondaryAction();
+
+        spyAbilities.performPrimaryAction();
+        spyAbilities.performSecondaryAction();
     }
 }
